@@ -278,39 +278,44 @@ pm2 save
 
 ### 12.3 推荐做成服务器脚本
 
-你可以在服务器上创建：
+仓库已提供：
 
 ```bash
 /www/wwwroot/apps/dailyhotapi-rww/deploy.sh
 ```
 
-内容：
+建议你在 VPS 上放置为：
 
 ```bash
-#!/usr/bin/env bash
-set -e
+/www/wwwroot/apps/dailyhotapi-rww/scripts/deploy-vps.sh
+```
 
+脚本内容见：
+
+- [deploy-vps.sh](/Users/rick/Agent/dailyhotapi-rww/scripts/deploy-vps.sh)
+
+脚本会自动执行：
+
+- 拉最新代码
+- 安装依赖
+- 构建项目
+- 提示你去宝塔 PM2 项目里重启
+
+如果你更习惯把它复制成根目录 `deploy.sh`，也可以，逻辑保持一致。
+
+命令示例：
+
+```bash
 cd /www/wwwroot/apps/dailyhotapi-rww
-git fetch origin
-git checkout master
-git pull --ff-only origin master
-pnpm install --frozen-lockfile
-pnpm build
+chmod +x scripts/deploy-vps.sh
+./scripts/deploy-vps.sh
+```
+
+如果你使用的是命令行 PM2，而不是宝塔 PM2 项目，脚本执行完后再补一条：
+
+```bash
 pm2 reload ecosystem.server.cjs --only dailyhotapi-rww || pm2 start ecosystem.server.cjs --only dailyhotapi-rww
 pm2 save
-```
-
-赋权：
-
-```bash
-chmod +x /www/wwwroot/apps/dailyhotapi-rww/deploy.sh
-```
-
-以后升级只需执行：
-
-```bash
-cd /www/wwwroot/apps/dailyhotapi-rww
-./deploy.sh
 ```
 
 ---
