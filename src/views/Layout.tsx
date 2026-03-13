@@ -90,6 +90,8 @@ const Layout: FC = (props) => {
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
       }
       .control button {
         display: flex;
@@ -100,7 +102,7 @@ const Layout: FC = (props) => {
         background-color: var(--text-color-hover);
         border-radius: 8px;
         padding: 8px 12px;
-        margin: 0 8px;
+        margin: 4px 8px;
         transition:
           color 0.3s,
           background-color 0.3s;

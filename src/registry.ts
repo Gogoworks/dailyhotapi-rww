@@ -1,55 +1,15 @@
-import { fileURLToPath } from "url";
 import { config } from "./config.js";
 import { Hono } from "hono";
 import getRSS from "./utils/getRSS.js";
-import path from "path";
-import fs from "fs";
+import { getSourceIds, loadSourceHandler } from "./lib/source-registry.js";
 
 const app = new Hono();
 
-// 模拟 __dirname
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 // 路由数据
-let allRoutePath: Array<string> = [];
-const routersDirName: string = "routes";
+const allRoutePath: Array<string> = getSourceIds();
 
 // 排除路由
 const excludeRoutes: Array<string> = [];
-
-// 建立完整目录路径
-const routersDirPath = path.join(__dirname, routersDirName);
-
-// 递归查找函数
-const findTsFiles = (dirPath: string, allFiles: string[] = [], basePath: string = ""): string[] => {
-  // 读取目录下的所有文件和文件夹
-  const items: Array<string> = fs.readdirSync(dirPath);
-  // 遍历每个文件或文件夹
-  items.forEach((item) => {
-    const fullPath: string = path.join(dirPath, item);
-    const relativePath: string = basePath ? path.posix.join(basePath, item) : item;
-    const stat: fs.Stats = fs.statSync(fullPath);
-    if (stat.isDirectory()) {
-      // 如果是文件夹，递归查找
-      findTsFiles(fullPath, allFiles, relativePath);
-    } else if (
-      stat.isFile() &&
-      (item.endsWith(".ts") || item.endsWith(".js")) &&
-      !item.endsWith(".d.ts")
-    ) {
-      // 符合条件
-      allFiles.push(relativePath.replace(/\.(ts|js)$/, ""));
-    }
-  });
-  return allFiles;
-};
-
-// 获取全部路由
-if (fs.existsSync(routersDirPath) && fs.statSync(routersDirPath).isDirectory()) {
-  allRoutePath = findTsFiles(routersDirPath);
-} else {
-  console.error(`📂 The directory ${routersDirPath} does not exist or is not a directory`);
-}
 
 // 注册全部路由
 for (let index = 0; index < allRoutePath.length; index++) {
@@ -68,7 +28,7 @@ for (let index = 0; index < allRoutePath.length; index++) {
     // 是否输出 RSS
     const rssEnabled = c.req.query("rss") === "true";
     // 获取路由路径
-    const { handleRoute } = await import(`./routes/${router}.js`);
+    const handleRoute = await loadSourceHandler(router);
     const listData = await handleRoute(c, noCache);
     // 是否限制条目
     if (limit && listData?.data?.length > parseInt(limit)) {

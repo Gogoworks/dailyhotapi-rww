@@ -32,6 +32,21 @@ const Home: FC = () => {
             </svg>
             <span className="btn-text">全部接口</span>
           </button>
+          <button id="radar-button">
+            <svg
+              className="btn-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 3a9 9 0 1 0 9 9a1 1 0 0 0-2 0a7 7 0 1 1-7-7a1 1 0 0 0 0-2m0 4a5 5 0 1 0 5 5a1 1 0 0 0-2 0a3 3 0 1 1-3-3a1 1 0 0 0 0-2m0 4a1 1 0 1 0 1 1a1 1 0 0 0-1-1"
+              />
+            </svg>
+            <span className="btn-text">雷达控制台</span>
+          </button>
           <button id="docs-button">
             <svg
               className="btn-icon"
@@ -53,6 +68,9 @@ const Home: FC = () => {
         <script>
           document.getElementById("all-button").addEventListener("click", () => {
             window.location.href = "/all";
+          });
+          document.getElementById("radar-button").addEventListener("click", () => {
+            window.location.href = "/radar";
           });
           document.getElementById("docs-button").addEventListener("click", () => {
             window.open("https://blog.imsyy.top/posts/2024/0408");

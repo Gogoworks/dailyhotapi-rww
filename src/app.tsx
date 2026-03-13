@@ -7,10 +7,13 @@ import { prettyJSON } from "hono/pretty-json";
 import { trimTrailingSlash } from "hono/trailing-slash";
 import logger from "./utils/logger.js";
 import registry from "./registry.js";
+import radar from "./radar.js";
 import robotstxt from "./robots.txt.js";
 import NotFound from "./views/NotFound.js";
 import Home from "./views/Home.js";
 import Error from "./views/Error.js";
+import { jsonError } from "./lib/json-response.js";
+import RadarConsole from "./views/RadarConsole.js";
 
 const app = new Hono();
 
@@ -48,17 +51,41 @@ app.use(
   }),
 );
 
+// Radar API
+app.route("/api/radar", radar);
+
 // 主路由
 app.route("/", registry);
 
 // robots
 app.get("/robots.txt", robotstxt);
+// 雷达控制台
+app.get("/radar", (c) => c.html(<RadarConsole />));
 // 首页
 app.get("/", (c) => c.html(<Home />));
 // 404
-app.notFound((c) => c.html(<NotFound />, 404));
+app.notFound((c) => {
+  if (new URL(c.req.url).pathname.startsWith("/api/radar")) {
+    return jsonError(c, {
+      status: 404,
+      message: "Radar endpoint not found",
+      type: "not_found",
+    });
+  }
+  return c.html(<NotFound />, 404);
+});
 // error
 app.onError((err, c) => {
+  if (new URL(c.req.url).pathname.startsWith("/api/radar")) {
+    return jsonError(c, {
+      status: 500,
+      message: "Radar request failed",
+      type: "internal_error",
+      details: {
+        error_message: err?.message ?? "Unknown error",
+      },
+    });
+  }
   logger.error(`❌ [ERROR] ${err?.message}`);
   return c.html(<Error error={err?.message} />, 500);
 });
