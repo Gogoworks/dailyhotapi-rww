@@ -13,4 +13,9 @@ test("GET /radar returns the console shell for browsing radar data", async () =>
   assert.match(html, /源列表/);
   assert.match(html, /\/api\/radar\/sources/);
   assert.match(html, /scan-detail/);
+  assert.match(html, /只看失败源/);
+  assert.match(html, /批量刷新/);
+  assert.match(html, /source-mark/);
+  assert.match(html, /copy-raw-button/);
+  assert.match(html, /navigator\.clipboard/);
 });
