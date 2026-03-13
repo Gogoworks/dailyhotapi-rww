@@ -30,10 +30,10 @@
     "format": "prettier --write .",
     "lint": "eslint .",
     "test": "tsx --test test/**/*.test.ts",
-    "dev": "cross-env NODE_ENV=development tsx watch --no-cache src/index.ts",
-    "dev:cache": "cross-env NODE_ENV=development tsx watch src/index.ts",
+    "dev": "cross-env NODE_ENV=development tsx watch --no-cache src/server.ts",
+    "dev:cache": "cross-env NODE_ENV=development tsx watch src/server.ts",
     "build": "tsc --project tsconfig.json",
-    "start": "cross-env NODE_ENV=production node dist/index.js"
+    "start": "cross-env NODE_ENV=production node dist/server.js"
   },
   "type": "module",
   "dependencies": {

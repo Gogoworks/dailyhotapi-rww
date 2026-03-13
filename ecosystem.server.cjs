@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "dailyhotapi-rww",
       cwd: "/www/wwwroot/apps/dailyhotapi-rww",
-      script: "./dist/index.js",
+      script: "./dist/server.js",
       instances: 1,
       exec_mode: "fork",
       autorestart: true,

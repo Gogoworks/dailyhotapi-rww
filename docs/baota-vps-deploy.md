@@ -143,8 +143,15 @@ pnpm build
 
 当前项目已经改成真正适合生产的启动方式：
 
-- 主入口执行时自动启动服务
-- `pnpm start` 默认使用 `NODE_ENV=production`
+- `src/index.ts` 只负责导出服务
+- `src/server.ts` 负责真正启动服务
+- `pnpm start` 默认执行 `dist/server.js`
+
+如果你使用宝塔的 **PM2 项目** 页面，而不是命令行 PM2：
+
+- 启动文件请填写：`/www/wwwroot/apps/dailyhotapi-rww/dist/server.js`
+- 运行目录请填写：`/www/wwwroot/apps/dailyhotapi-rww`
+- 项目端口请填写：`6688`
 
 ---
 
