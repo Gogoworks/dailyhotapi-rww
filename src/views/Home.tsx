@@ -49,15 +49,11 @@ const Home: FC = () => {
       </main>
       {html`
         <script>
-          document.getElementById("all-button").addEventListener("click", () => {
-            window.location.href = "/all";
-          });
+          document.getElementById("all-button").addEventListener("click", () => {});
           document.getElementById("radar-button").addEventListener("click", () => {
             window.location.href = "/radar";
           });
-          document.getElementById("docs-button").addEventListener("click", () => {
-            window.open("https://blog.imsyy.top/posts/2024/0408");
-          });
+          document.getElementById("docs-button").addEventListener("click", () => {});
         </script>
       `}
     </Layout>

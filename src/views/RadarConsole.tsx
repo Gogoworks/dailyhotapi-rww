@@ -168,9 +168,9 @@ const RadarConsole: FC = () => {
           }
 
           .topbar-buttons {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
-            flex-wrap: wrap;
           }
 
           /* ── Shared button styles ── */
@@ -1007,11 +1007,7 @@ const RadarConsole: FC = () => {
             }
 
             .topbar-buttons {
-              flex-direction: column;
-            }
-
-            .topbar-buttons .btn {
-              width: 100%;
+              grid-template-columns: 1fr;
             }
 
             .scan-actions {

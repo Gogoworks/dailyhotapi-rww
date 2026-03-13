@@ -246,7 +246,7 @@ const Layout: FC = (props) => {
         {props.children}
         <footer>
           <div class="footer-links">
-            <a href="https://github.com/imsyy/DailyHotApi" target="_blank" aria-label="GitHub">
+            <a href="https://github.com/Gogoworks/dailyhotapi-rww" target="_blank" aria-label="GitHub">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -254,7 +254,7 @@ const Layout: FC = (props) => {
                 />
               </svg>
             </a>
-            <a href="https://www.imsyy.top" target="_blank" aria-label="Homepage">
+            <a href="https://ricktung.com" target="_blank" aria-label="Homepage">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -262,7 +262,7 @@ const Layout: FC = (props) => {
                 />
               </svg>
             </a>
-            <a href="mailto:one@imsyy.top" aria-label="Email">
+            <a href="mailto:hi@ricktung.com" aria-label="Email">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -273,18 +273,13 @@ const Layout: FC = (props) => {
           </div>
           <div class="footer-text">
             Copyright &copy;{" "}
-            <a href="https://www.imsyy.top/" target="_blank">
-              無名
+            <a href="https://ricktung.com" target="_blank">
+              睿客
             </a>
             <span class="footer-divider"> | </span>
             Powered by{" "}
-            <a href="https://github.com/honojs/hono/" target="_blank">
-              Hono
-            </a>
-          </div>
-          <div class="footer-text">
-            <a href="https://beian.miit.gov.cn/" target="_blank">
-              豫ICP备2022018134号-1
+            <a href="https://ricktung.com" target="_blank">
+              ricktung
             </a>
           </div>
         </footer>
