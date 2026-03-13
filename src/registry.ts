@@ -1,23 +1,17 @@
 import { config } from "./config.js";
 import { Hono } from "hono";
 import getRSS from "./utils/getRSS.js";
-import { getSourceIds, loadSourceHandler } from "./lib/source-registry.js";
+import { getAllSourceIds, getSourceIds, isSourceDisabled, loadSourceHandler } from "./lib/source-registry.js";
 
 const app = new Hono();
 
 // 路由数据
-const allRoutePath: Array<string> = getSourceIds();
-
-// 排除路由
-const excludeRoutes: Array<string> = [];
+const allRoutePath: Array<string> = getAllSourceIds();
+const enabledRoutePath: Array<string> = getSourceIds();
 
 // 注册全部路由
-for (let index = 0; index < allRoutePath.length; index++) {
-  const router = allRoutePath[index];
-  // 是否处于排除名单
-  if (excludeRoutes.includes(router)) {
-    continue;
-  }
+for (let index = 0; index < enabledRoutePath.length; index++) {
+  const router = enabledRoutePath[index];
   const listApp = app.basePath(`/${router}`);
   // 返回榜单
   listApp.get("/", async (c) => {
@@ -58,8 +52,7 @@ app.get("/all", (c) =>
       code: 200,
       count: allRoutePath.length,
       routes: allRoutePath.map((path) => {
-        // 是否处于排除名单
-        if (excludeRoutes.includes(path)) {
+        if (isSourceDisabled(path)) {
           return {
             name: path,
             path: undefined,

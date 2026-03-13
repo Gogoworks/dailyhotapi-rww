@@ -1,6 +1,7 @@
 import type { ListItem, RouterData } from "../types.js";
 import { get } from "../utils/getData.js";
-import { load } from "cheerio";
+import { getTime } from "../utils/getTime.js";
+import RSSParser from "rss-parser";
 
 export const handleRoute = async (_: undefined, noCache: boolean) => {
   const listData = await getList(noCache);
@@ -17,43 +18,29 @@ export const handleRoute = async (_: undefined, noCache: boolean) => {
 };
 
 const getList = async (noCache: boolean) => {
-  const baseUrl = "https://www.producthunt.com";
-  const result = await get<string>({
-    url: baseUrl,
-    noCache,
-    headers: {
-      userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
-    }
-  });
+  const url = "https://www.producthunt.com/feed";
+  const result = await get<string>({ url, noCache });
+  return {
+    ...result,
+    data: await parseProductHuntFeed(result.data),
+  };
+};
 
-  try {
-    const $ = load(result.data);
-    const stories: ListItem[] = [];
+export const parseProductHuntFeed = async (feedContent: string): Promise<ListItem[]> => {
+  const parser = new RSSParser();
+  const feed = await parser.parseString(feedContent);
 
-    $("[data-test=homepage-section-0] [data-test^=post-item]").each((_, el) => {
-      const a = $(el).find("a").first();
-      const path = a.attr("href");
-      const title = $(el).find("a[data-test^=post-name]").text().trim();
-      const id = $(el).attr("data-test")?.replace("post-item-", "");
-      const vote = $(el).find("[data-test=vote-button]").text().trim();
-
-      if (path && id && title) {
-        stories.push({
-          id,
-          title,
-          hot: parseInt(vote) || undefined,
-          timestamp: undefined,
-          url: `${baseUrl}${path}`,
-          mobileUrl: `${baseUrl}${path}`,
-        });
-      }
-    });
-
+  return feed.items.map((item, index) => {
+    const atomItem = item as typeof item & { id?: string };
     return {
-      ...result,
-      data: stories,
+      id: item.guid || atomItem.id || item.link || `producthunt-${index}`,
+      title: item.title || "",
+      desc: item.contentSnippet?.trim() || "",
+      author: item.creator ?? item.author,
+      hot: undefined,
+      timestamp: getTime(item.pubDate || 0),
+      url: item.link || "",
+      mobileUrl: item.link || "",
     };
-  } catch (error) {
-    throw new Error(`Failed to parse Product Hunt HTML: ${error}`);
-  }
+  });
 };

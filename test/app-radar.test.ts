@@ -15,6 +15,9 @@ test("GET /api/radar/sources returns radar source list as JSON", async () => {
   assert.equal(body.code, 200);
   assert.ok(Array.isArray(body.data.sources));
   assert.ok(body.data.sources.some((source: { source_id: string }) => source.source_id === "bilibili"));
+  assert.ok(!body.data.sources.some((source: { source_id: string }) => source.source_id === "coolapk"));
+  assert.ok(!body.data.sources.some((source: { source_id: string }) => source.source_id === "earthquake"));
+  assert.ok(!body.data.sources.some((source: { source_id: string }) => source.source_id === "lol"));
 });
 
 test("GET /api/radar/scan/unknown-source returns a JSON 404 envelope", async () => {
@@ -38,6 +41,45 @@ test("GET /all keeps the existing public route behavior", async () => {
   assert.equal(body.count, 56);
   assert.ok(Array.isArray(body.routes));
   assert.ok(body.routes.some((route: { name: string; path: string }) => route.name === "bilibili"));
+  assert.deepEqual(
+    body.routes.find((route: { name: string }) => route.name === "coolapk"),
+    {
+      name: "coolapk",
+      message: "This interface is temporarily offline",
+    },
+  );
+  assert.deepEqual(
+    body.routes.find((route: { name: string }) => route.name === "earthquake"),
+    {
+      name: "earthquake",
+      message: "This interface is temporarily offline",
+    },
+  );
+  assert.deepEqual(
+    body.routes.find((route: { name: string }) => route.name === "lol"),
+    {
+      name: "lol",
+      message: "This interface is temporarily offline",
+    },
+  );
+});
+
+test("GET /api/radar/scan for disabled sources returns not found", async () => {
+  const coolapkResponse = await request("/api/radar/scan/coolapk");
+  const earthquakeResponse = await request("/api/radar/scan/earthquake");
+  const lolResponse = await request("/api/radar/scan/lol");
+
+  assert.equal(coolapkResponse.status, 404);
+  assert.equal(earthquakeResponse.status, 404);
+  assert.equal(lolResponse.status, 404);
+
+  const coolapkBody = await coolapkResponse.json();
+  const earthquakeBody = await earthquakeResponse.json();
+  const lolBody = await lolResponse.json();
+
+  assert.equal(coolapkBody.error.type, "not_found");
+  assert.equal(earthquakeBody.error.type, "not_found");
+  assert.equal(lolBody.error.type, "not_found");
 });
 
 test("GET /scan/:sourceId returns source metadata and normalized items", async () => {

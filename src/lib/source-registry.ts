@@ -5,9 +5,11 @@ import type { ListContext, RouterData } from "../types.js";
 
 export type SourceHandler = (c: ListContext, noCache: boolean) => Promise<RouterData>;
 
+const disabledSourceIds = new Set(["coolapk", "earthquake", "lol"]);
+
 const routesDirectory = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../routes");
 
-let cachedSourceIds: string[] | null = null;
+let cachedAllSourceIds: string[] | null = null;
 
 const findRouteFiles = (dirPath: string, allFiles: string[] = [], basePath = ""): string[] => {
   const items = fs.readdirSync(dirPath);
@@ -30,18 +32,22 @@ const findRouteFiles = (dirPath: string, allFiles: string[] = [], basePath = "")
   return allFiles;
 };
 
-export const getSourceIds = (): string[] => {
-  if (cachedSourceIds) {
-    return cachedSourceIds;
+export const getAllSourceIds = (): string[] => {
+  if (cachedAllSourceIds) {
+    return cachedAllSourceIds;
   }
 
   if (!fs.existsSync(routesDirectory) || !fs.statSync(routesDirectory).isDirectory()) {
     throw new Error(`Routes directory does not exist: ${routesDirectory}`);
   }
 
-  cachedSourceIds = findRouteFiles(routesDirectory).sort((left, right) => left.localeCompare(right));
-  return cachedSourceIds;
+  cachedAllSourceIds = findRouteFiles(routesDirectory).sort((left, right) => left.localeCompare(right));
+  return cachedAllSourceIds;
 };
+
+export const isSourceDisabled = (sourceId: string): boolean => disabledSourceIds.has(sourceId);
+
+export const getSourceIds = (): string[] => getAllSourceIds().filter((sourceId) => !isSourceDisabled(sourceId));
 
 export const hasSource = (sourceId: string): boolean => getSourceIds().includes(sourceId);
 
